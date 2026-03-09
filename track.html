@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Track Your Order — SATYASAAR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#f7f4ef; --charcoal:#1a1a1a; --gold:#b8965a;
+  --muted:#7a7066; --border:rgba(0,0,0,0.08); --white:#fff;
+  --success:#2a6e3a; --error:#c0392b;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Montserrat',sans-serif;background:var(--cream);color:var(--charcoal);min-height:100vh}
+
+/* NAV */
+.nav{
+  background:var(--white);border-bottom:1px solid var(--border);
+  padding:0 48px;height:64px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;letter-spacing:.28em;text-transform:uppercase;color:var(--charcoal);text-decoration:none}
+.nav-back{font-size:10px;letter-spacing:.14em;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .25s}
+.nav-back:hover{color:var(--gold)}
+.nav-back svg{flex-shrink:0}
+
+/* HERO */
+.hero{
+  background:var(--charcoal);padding:56px 48px 52px;
+  position:relative;overflow:hidden;
+}
+.hero::after{
+  content:'TRACK';position:absolute;right:-20px;top:50%;transform:translateY(-50%);
+  font-family:'Cormorant Garamond',serif;font-size:clamp(60px,14vw,200px);font-weight:300;
+  letter-spacing:.08em;color:rgba(255,255,255,.03);pointer-events:none;white-space:nowrap;
+}
+.hero-tag{font-size:9px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,5vw,52px);font-weight:300;letter-spacing:.06em;color:var(--white);margin-bottom:10px}
+.hero p{font-size:12px;font-weight:300;color:rgba(255,255,255,.45);letter-spacing:.04em}
+
+/* SEARCH CARD */
+.search-wrap{max-width:780px;margin:0 auto;padding:0 48px}
+.search-card{
+  background:var(--white);border:1px solid var(--border);
+  padding:36px 40px;margin-top:-28px;position:relative;z-index:10;
+  box-shadow:0 8px 40px rgba(0,0,0,.08);
+}
+.search-label{font-size:9px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:10px}
+.search-row{display:flex;gap:0}
+.search-inp{
+  flex:1;height:52px;border:1px solid var(--border);border-right:none;
+  background:var(--cream);outline:none;
+  font-family:'Montserrat',sans-serif;font-size:13px;font-weight:300;
+  letter-spacing:.04em;color:var(--charcoal);padding:0 18px;
+  transition:border-color .25s;
+}
+.search-inp:focus{border-color:var(--charcoal)}
+.search-inp::placeholder{color:#bbb}
+.search-btn{
+  height:52px;padding:0 28px;background:var(--charcoal);color:var(--white);
+  border:none;cursor:pointer;font-family:'Montserrat',sans-serif;
+  font-size:10px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;
+  transition:background .25s;white-space:nowrap;display:flex;align-items:center;gap:8px;
+}
+.search-btn:hover{background:var(--gold)}
+.search-btn:disabled{background:#ccc;cursor:not-allowed}
+.search-hint{font-size:10px;color:var(--muted);margin-top:10px;letter-spacing:.04em}
+.search-hint span{color:var(--gold);cursor:pointer;text-decoration:underline}
+
+/* SPINNER */
+.spinner{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:spin .6s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.searching .search-btn .spinner{display:block}
+.searching .search-btn .btn-text{display:none}
+
+/* ── RESULT ──────────────────────────────────────────────────── */
+#result{max-width:780px;margin:28px auto 80px;padding:0 48px;display:none}
+#result.show{display:block;animation:fadeUp .45s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* Status banner */
+.status-banner{
+  padding:24px 32px;margin-bottom:24px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.status-banner.manifested  {background:#f0f8ff;border:1px solid #c2dcf0}
+.status-banner.in-transit  {background:#fff8ed;border:1px solid #f0d080}
+.status-banner.out-delivery{background:#fff3cd;border:1px solid #e6b800}
+.status-banner.delivered   {background:#f0f9f4;border:1px solid #8fc9a0}
+.status-banner.rto         {background:#fff2f2;border:1px solid #f0a0a0}
+.status-banner.default     {background:#f5f5f5;border:1px solid #ddd}
+
+.sb-left{display:flex;align-items:center;gap:16px}
+.status-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.manifested   .status-dot{background:#7bafd4}
+.in-transit   .status-dot{background:#f0a030;animation:statusPulse 1.5s ease infinite}
+.out-delivery .status-dot{background:#e6b800;animation:statusPulse 1s ease infinite}
+.delivered    .status-dot{background:var(--success)}
+.rto          .status-dot{background:var(--error)}
+.default      .status-dot{background:#aaa}
+@keyframes statusPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.6}}
+
+.status-main{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;letter-spacing:.06em;color:var(--charcoal)}
+.status-waybill{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+
+.edd-chip{
+  text-align:right;flex-shrink:0;
+}
+.edd-label{font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.edd-date{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;color:var(--charcoal)}
+
+/* Info cards */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.info-card{background:var(--white);border:1px solid var(--border);padding:18px 20px}
+.ic-label{font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.ic-value{font-size:12.5px;font-weight:300;color:var(--charcoal);line-height:1.6}
+.ic-value strong{font-weight:500}
+
+/* Progress bar */
+.progress-card{background:var(--white);border:1px solid var(--border);padding:28px 32px;margin-bottom:24px}
+.progress-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;letter-spacing:.1em;color:var(--charcoal);margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+
+.progress-steps{display:flex;justify-content:space-between;position:relative;margin-bottom:32px}
+.progress-steps::before{
+  content:'';position:absolute;top:16px;left:0;right:0;height:1px;background:var(--border);z-index:0;
+}
+.progress-line{
+  position:absolute;top:16px;left:0;height:1px;background:var(--gold);z-index:1;
+  transition:width .8s cubic-bezier(.4,0,.2,1);
+}
+.ps{display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;z-index:2;flex:1}
+.ps-dot{
+  width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);
+  background:var(--cream);display:flex;align-items:center;justify-content:center;
+  transition:all .4s ease;font-size:12px;
+}
+.ps.done   .ps-dot{background:var(--gold);border-color:var(--gold);color:#fff}
+.ps.active .ps-dot{background:var(--charcoal);border-color:var(--charcoal);color:#fff;box-shadow:0 0 0 4px rgba(26,26,26,.1)}
+.ps-label{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;max-width:72px;line-height:1.4}
+.ps.done .ps-label,.ps.active .ps-label{color:var(--charcoal)}
+
+/* Timeline */
+.timeline-title{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:16px;position:relative;padding-bottom:22px}
+.tl-item:last-child{padding-bottom:0}
+.tl-item:last-child .tl-line{display:none}
+.tl-left{display:flex;flex-direction:column;align-items:center;width:28px;flex-shrink:0}
+.tl-dot{
+  width:10px;height:10px;border-radius:50%;border:1.5px solid var(--border);
+  background:var(--white);flex-shrink:0;margin-top:3px;transition:all .3s;
+}
+.tl-item.latest .tl-dot{background:var(--gold);border-color:var(--gold);width:12px;height:12px;margin-top:2px}
+.tl-line{width:1px;flex:1;background:var(--border);margin:6px 0}
+.tl-right{flex:1}
+.tl-status{font-size:12px;font-weight:400;letter-spacing:.04em;color:var(--charcoal);margin-bottom:3px}
+.tl-item.latest .tl-status{font-weight:500;color:var(--gold)}
+.tl-location{font-size:10.5px;color:var(--muted);margin-bottom:2px}
+.tl-time{font-size:9.5px;color:#bbb;letter-spacing:.04em}
+.tl-remark{font-size:10px;color:var(--muted);margin-top:4px;font-style:italic}
+
+/* ERROR / NOT FOUND */
+.error-box{background:var(--white);border:1px solid var(--border);padding:40px 32px;text-align:center}
+.error-icon{font-size:32px;margin-bottom:14px}
+.error-box h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;letter-spacing:.1em;color:var(--charcoal);margin-bottom:8px}
+.error-box p{font-size:11.5px;color:var(--muted);line-height:1.8}
+.error-box a{color:var(--gold);text-decoration:none}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .nav,.hero,.search-wrap{padding-left:20px;padding-right:20px}
+  #result{padding:0 20px;margin-bottom:48px}
+  .info-grid{grid-template-columns:1fr}
+  .search-card{padding:24px 22px}
+  .progress-card{padding:22px 18px}
+  .status-banner{padding:18px 20px}
+  .ps-label{font-size:7.5px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <a href="index.html" class="nav-back">
+    <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M13 5H1M5 1L1 5L5 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    Back to Shop
+  </a>
+  <a href="index.html" class="nav-logo">SATYASAAR</a>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Delhivery Tracking</div>
+  <h1>Track Your Order</h1>
+  <p>Enter your waybill number or order ID to see live delivery status.</p>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <div class="search-card">
+    <label class="search-label" for="waybillInput">Waybill / Tracking Number</label>
+    <div class="search-row">
+      <input class="search-inp" id="waybillInput" type="text"
+        placeholder="e.g. 1234567890  or  ORD-1706789012345"
+        autocomplete="off" spellcheck="false"/>
+      <button class="search-btn" id="trackBtn" onclick="doTrack()">
+        <span class="btn-text">Track Shipment</span>
+        <div class="spinner"></div>
+      </button>
+    </div>
+    <p class="search-hint">
+      Find your waybill in the shipping confirmation email, or
+      <span onclick="tryDemo()">try a demo</span>.
+    </p>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result"></div>
+
+<script>
+/* ── CONFIG ── change this to your proxy URL after deploying ─── */
+var PROXY = ' https://sthii.netlify.app/api/delhivery';  /* e.g. https://satyasaar.netlify.app/api/delhivery */
+
+/* ── STATUS MAPPINGS ─────────────────────────────────────────── */
+var STATUS_STEPS = [
+  { key:'created',    label:'Ordered',      icon:'📦', codes:['Manifested','Pickup Scheduled','Pickup Generated'] },
+  { key:'picked',     label:'Picked Up',    icon:'🚚', codes:['Pickup Exception','In Transit'] },
+  { key:'in-transit', label:'In Transit',   icon:'🛣️',  codes:['Reached at Destination'] },
+  { key:'out',        label:'Out for Del.', icon:'🏠', codes:['Out for Delivery','Failed Delivery Attempt'] },
+  { key:'delivered',  label:'Delivered',    icon:'✓',  codes:['Delivered'] },
+];
+
+function getStepIndex(status) {
+  for (var i = STATUS_STEPS.length - 1; i >= 0; i--) {
+    if (STATUS_STEPS[i].codes.some(function(c){ return status && status.toLowerCase().includes(c.toLowerCase()); })) {
+      return i;
+    }
+  }
+  return 0;
+}
+
+function getBannerClass(status) {
+  if (!status) return 'default';
+  var s = status.toLowerCase();
+  if (s.includes('delivered') && !s.includes('rto')) return 'delivered';
+  if (s.includes('out for')) return 'out-delivery';
+  if (s.includes('transit') || s.includes('reached')) return 'in-transit';
+  if (s.includes('rto') || s.includes('return') || s.includes('cancel')) return 'rto';
+  if (s.includes('manifest') || s.includes('pickup')) return 'manifested';
+  return 'default';
+}
+
+function fmt(iso) {
+  if (!iso) return '';
+  try {
+    var d = new Date(iso.replace(/ /, 'T'));
+    return d.toLocaleString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit', hour12:true });
+  } catch(e) { return iso; }
+}
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  try {
+    var d = new Date(iso);
+    return d.toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long' });
+  } catch(e) { return iso; }
+}
+
+/* ── TRACK ───────────────────────────────────────────────────── */
+function doTrack() {
+  var val = (document.getElementById('waybillInput').value || '').trim();
+  if (!val) { document.getElementById('waybillInput').focus(); return; }
+  trackWaybill(val);
+}
+
+document.getElementById('waybillInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doTrack();
+});
+
+async function trackWaybill(waybill) {
+  var wrap  = document.querySelector('.search-wrap');
+  var btn   = document.getElementById('trackBtn');
+  var resultEl = document.getElementById('result');
+
+  wrap.classList.add('searching');
+  btn.disabled = true;
+  resultEl.classList.remove('show');
+  resultEl.innerHTML = '';
+
+  try {
+    var res  = await fetch(PROXY + '?action=track&waybill=' + encodeURIComponent(waybill));
+    var data = await res.json();
+
+    if (!res.ok || data.error) {
+      showError(data.error || 'Tracking failed', waybill);
+    } else {
+      renderResult(data);
+    }
+  } catch(err) {
+    showError('Could not connect to tracking service. Please try again.', waybill);
+  }
+
+  wrap.classList.remove('searching');
+  btn.disabled = false;
+}
+
+/* ── RENDER RESULT ───────────────────────────────────────────── */
+function renderResult(data) {
+  var resultEl = document.getElementById('result');
+  var stepIdx  = getStepIndex(data.status);
+  var bannerCls = getBannerClass(data.status);
+  var isRTO    = data.status && data.status.toLowerCase().includes('rto');
+  var isDelivered = data.status && data.status.toLowerCase().includes('delivered') && !isRTO;
+
+  // Progress line width
+  var lineW = stepIdx === 0 ? 0 : Math.round((stepIdx / (STATUS_STEPS.length - 1)) * 100);
+
+  // Build progress steps HTML
+  var stepsHtml = STATUS_STEPS.map(function(step, i) {
+    var cls = i < stepIdx ? 'done' : (i === stepIdx ? 'active' : '');
+    var icon = i < stepIdx ? '✓' : (i === stepIdx ? step.icon : '');
+    return '<div class="ps ' + cls + '">' +
+      '<div class="ps-dot">' + icon + '</div>' +
+      '<div class="ps-label">' + step.label + '</div>' +
+    '</div>';
+  }).join('');
+
+  // Build timeline HTML
+  var scans = data.scans || [];
+  var timelineHtml = '';
+  if (scans.length === 0) {
+    timelineHtml = '<p style="font-size:11px;color:var(--muted);letter-spacing:.04em">No tracking events yet. Check back shortly.</p>';
+  } else {
+    timelineHtml = scans.slice().reverse().map(function(scan, idx) {
+      var isLatest = idx === 0;
+      return '<div class="tl-item ' + (isLatest ? 'latest' : '') + '">' +
+        '<div class="tl-left">' +
+          '<div class="tl-dot"></div>' +
+          '<div class="tl-line"></div>' +
+        '</div>' +
+        '<div class="tl-right">' +
+          '<div class="tl-status">' + (scan.label || scan.status) + '</div>' +
+          (scan.location ? '<div class="tl-location">📍 ' + scan.location + '</div>' : '') +
+          '<div class="tl-time">' + fmt(scan.date) + '</div>' +
+          (scan.remark ? '<div class="tl-remark">' + scan.remark + '</div>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // EDD or delivered date
+  var eddHtml = '';
+  if (isDelivered && data.deliveredDate) {
+    eddHtml = '<div class="edd-chip">' +
+      '<div class="edd-label">Delivered On</div>' +
+      '<div class="edd-date" style="color:var(--success)">' + fmtDate(data.deliveredDate) + '</div>' +
+    '</div>';
+  } else if (!isDelivered && data.expectedDate) {
+    eddHtml = '<div class="edd-chip">' +
+      '<div class="edd-label">Expected Delivery</div>' +
+      '<div class="edd-date">' + fmtDate(data.expectedDate) + '</div>' +
+    '</div>';
+  }
+
+  resultEl.innerHTML =
+    /* STATUS BANNER */
+    '<div class="status-banner ' + bannerCls + '">' +
+      '<div class="sb-left">' +
+        '<div class="status-dot"></div>' +
+        '<div>' +
+          '<div class="status-main">' + (data.statusLabel || data.status || 'Unknown') + '</div>' +
+          '<div class="status-waybill">Waybill: ' + data.waybill + '</div>' +
+        '</div>' +
+      '</div>' +
+      eddHtml +
+    '</div>' +
+
+    /* INFO GRID */
+    '<div class="info-grid">' +
+      '<div class="info-card"><div class="ic-label">Consignee</div><div class="ic-value"><strong>' + (data.consignee?.name || '—') + '</strong><br>' + (data.consignee?.city || '') + '</div></div>' +
+      '<div class="info-card"><div class="ic-label">Route</div><div class="ic-value">' + (data.origin || '—') + ' → <strong>' + (data.destination || '—') + '</strong></div></div>' +
+      '<div class="info-card"><div class="ic-label">Payment Mode</div><div class="ic-value">' + (data.paymentMode || '—') + '</div></div>' +
+      '<div class="info-card"><div class="ic-label">Weight</div><div class="ic-value">' + (data.weight ? data.weight + ' kg' : '—') + '</div></div>' +
+    '</div>' +
+
+    /* PROGRESS */
+    '<div class="progress-card">' +
+      '<div class="progress-title">Delivery Progress</div>' +
+      '<div class="progress-steps">' +
+        '<div class="progress-line" id="progressLine" style="width:' + lineW + '%"></div>' +
+        stepsHtml +
+      '</div>' +
+      '<div class="timeline-title">Tracking History</div>' +
+      '<div class="timeline">' + timelineHtml + '</div>' +
+    '</div>';
+
+  resultEl.classList.add('show');
+  resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showError(msg, waybill) {
+  var resultEl = document.getElementById('result');
+  resultEl.innerHTML =
+    '<div class="error-box">' +
+      '<div class="error-icon">🔍</div>' +
+      '<h3>Shipment Not Found</h3>' +
+      '<p>' + msg + '<br><br>' +
+      'Waybill searched: <strong>' + waybill + '</strong><br><br>' +
+      'Please check your confirmation email for the correct waybill number, or<br>' +
+      'contact us at <a href="mailto:care@satyasaar.com">care@satyasaar.com</a></p>' +
+    '</div>';
+  resultEl.classList.add('show');
+}
+
+/* ── DEMO ────────────────────────────────────────────────────── */
+function tryDemo() {
+  var demoData = {
+    waybill: '1234567890',
+    status: 'Out for Delivery',
+    statusLabel: 'Out for Delivery',
+    expectedDate: new Date(Date.now() + 86400000).toISOString(),
+    deliveredDate: null,
+    origin: 'Mumbai',
+    destination: 'Delhi',
+    consignee: { name: 'Arjun Sharma', city: 'New Delhi' },
+    weight: '0.8',
+    paymentMode: 'Prepaid',
+    scans: [
+      { date: new Date(Date.now()-172800000).toISOString(), status:'Manifested', label:'Shipment Created', location:'Mumbai Hub', remark:'' },
+      { date: new Date(Date.now()-144000000).toISOString(), status:'In Transit', label:'In Transit', location:'Mumbai Sorting Centre', remark:'' },
+      { date: new Date(Date.now()-86400000).toISOString(),  status:'In Transit', label:'In Transit', location:'Nagpur Hub', remark:'' },
+      { date: new Date(Date.now()-43200000).toISOString(),  status:'Reached at Destination', label:'At Destination Hub', location:'Delhi Hub', remark:'' },
+      { date: new Date(Date.now()-7200000).toISOString(),   status:'Out for Delivery', label:'Out for Delivery', location:'Delhi - South', remark:'Delivery by today evening' },
+    ]
+  };
+  document.getElementById('waybillInput').value = '1234567890';
+  renderResult(demoData);
+}
+
+/* ── AUTO-TRACK FROM URL PARAM ───────────────────────────────── */
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var wb = params.get('waybill') || params.get('tracking') || params.get('order');
+  if (wb) {
+    document.getElementById('waybillInput').value = wb;
+    trackWaybill(wb);
+  }
+})();
+</script>
+
+<!-- Chatbot -->
+<script src="chatbot.js"></script>
+</body>
+</html>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hanuman Sthir by Satyasaar — Blog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --charcoal: #1a1a1a;
+      --muted:    #7a7066;
+      --gold:     #b8965a;
+      --border:   rgba(0,0,0,0.09);
+      --white:    #ffffff;
+      --cream:    #f7f4ef;
+    }
+
+    /* ── SMOOTH SCROLL ──────────────────────────────────────────── */
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 70px;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--white);
+      color: var(--charcoal);
+      overflow-x: hidden;
+    }
+
+    /* Smooth page-load fade */
+    body { animation: pageFade .6s ease both; }
+    @keyframes pageFade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* ── PROGRESS BAR ───────────────────────────────────────────── */
+    .read-progress {
+      position: fixed; top: 0; left: 0;
+      height: 2px; width: 0%;
+      background: var(--gold);
+      z-index: 9999;
+      transition: width .1s linear;
+    }
+
+    /* ── NAVBAR ─────────────────────────────────────────────────── */
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 48px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px; font-weight: 300;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--charcoal); text-decoration: none;
+      transition: color .25s;
+    }
+    .nav-logo:hover { color: var(--gold); }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a {
+      font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      position: relative; transition: color .25s;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 1px; background: var(--gold);
+      transition: width .3s ease;
+    }
+    .nav-links a:hover { color: var(--charcoal); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* ── HERO HEADER ────────────────────────────────────────────── */
+    .blog-hero {
+      text-align: center;
+      padding: 72px 48px 52px;
+      max-width: 900px; margin: 0 auto;
+    }
+    .blog-category {
+      font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 22px;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+    }
+    .blog-category span { color: var(--muted); }
+
+    .blog-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(38px, 7vw, 92px);
+      font-weight: 300; letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--charcoal);
+      line-height: 1.05;
+      margin-bottom: 36px;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex; align-items: center; justify-content: center;
+      gap: 14px; flex-wrap: wrap;
+    }
+    .breadcrumb a {
+      font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      transition: color .25s;
+    }
+    .breadcrumb a:hover { color: var(--charcoal); }
+    .breadcrumb-sep {
+      font-size: 12px; color: rgba(0,0,0,0.25);
+    }
+    .breadcrumb span {
+      font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--charcoal);
+    }
+
+    /* ── ARTICLE WRAP ───────────────────────────────────────────── */
+    .article-wrap {
+      max-width: 800px; margin: 0 auto;
+      padding: 0 48px 100px;
+    }
+
+    /* ── HERO IMAGE ─────────────────────────────────────────────── */
+    .article-hero-img {
+      width: 100%; margin-bottom: 52px;
+      overflow: hidden;
+      position: relative;
+    }
+    .article-hero-img img {
+      width: 100%; display: block;
+      transition: transform 1s cubic-bezier(.16,1,.3,1);
+    }
+    .article-hero-img:hover img { transform: scale(1.03); }
+
+    /* ── ARTICLE BODY ───────────────────────────────────────────── */
+    .article-body p {
+      font-size: 15px; font-weight: 300; line-height: 1.95;
+      color: #555; margin-bottom: 24px;
+      letter-spacing: 0.01em;
+    }
+
+    .article-body h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 300; color: var(--charcoal);
+      letter-spacing: 0.02em; margin: 44px 0 18px;
+      line-height: 1.2;
+      position: relative;
+      padding-bottom: 14px;
+    }
+    .article-body h2::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 40px; height: 1px; background: var(--gold);
+      transition: width .4s ease;
+    }
+    .article-body h2:hover::after { width: 120px; }
+
+    .article-body h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(18px, 2.2vw, 26px);
+      font-weight: 400; color: var(--charcoal);
+      letter-spacing: 0.04em; margin: 34px 0 14px;
+    }
+
+    /* Pull quote */
+    .pull-quote {
+      border-left: 2px solid var(--gold);
+      padding: 10px 0 10px 28px;
+      margin: 36px 0;
+    }
+    .pull-quote p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(17px, 2vw, 22px);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--charcoal);
+      line-height: 1.7;
+      margin-bottom: 0;
+    }
+
+    /* Lists */
+    .article-body ul {
+      list-style: none; margin: 6px 0 28px 0;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .article-body ul li {
+      font-size: 14px; font-weight: 300; line-height: 1.75;
+      color: #555; padding-left: 20px; position: relative;
+    }
+    .article-body ul li::before {
+      content: '•'; position: absolute; left: 0;
+      color: var(--gold); font-size: 16px; line-height: 1.5;
+    }
+
+    /* Inline image */
+    .article-img {
+      width: 100%; margin: 36px 0;
+      overflow: hidden;
+    }
+    .article-img img {
+      width: 100%; display: block;
+      transition: transform .8s cubic-bezier(.16,1,.3,1);
+    }
+    .article-img:hover img { transform: scale(1.025); }
+    .article-img figcaption {
+      font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); text-align: center; margin-top: 10px;
+    }
+
+    /* Tags row */
+    .article-tags {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 14px;
+      padding: 28px 0; margin-top: 32px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .tags-left {
+      font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--charcoal); font-weight: 500;
+    }
+    .tags-right {
+      font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--charcoal); font-weight: 500;
+    }
+    .tag-pill {
+      display: inline-block; padding: 5px 14px;
+      border: 1px solid var(--border);
+      font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--muted); cursor: pointer;
+      transition: border-color .25s, color .25s, background .25s;
+      margin-left: 8px;
+    }
+    .tag-pill:hover { border-color: var(--charcoal); color: var(--charcoal); background: var(--cream); }
+
+    /* ── AUTHOR CARD ────────────────────────────────────────────── */
+    .author-card {
+      display: flex; gap: 28px; align-items: flex-start;
+      padding: 36px 0; border-bottom: 1px solid var(--border);
+      margin-top: 4px;
+      transition: background .3s;
+    }
+    .author-card:hover { background: var(--cream); padding-left: 16px; padding-right: 16px; margin-left: -16px; margin-right: -16px; }
+
+    .author-img {
+      width: 120px; height: 120px; flex-shrink: 0;
+      overflow: hidden; filter: grayscale(100%);
+      transition: filter .4s ease;
+    }
+    .author-card:hover .author-img { filter: grayscale(0%); }
+    .author-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .author-info { flex: 1; padding-top: 4px; }
+    .author-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px; font-weight: 500;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--charcoal); margin-bottom: 4px;
+    }
+    .author-role {
+      font-size: 11px; letter-spacing: 0.1em;
+      color: var(--gold); margin-bottom: 14px;
+    }
+    .author-bio {
+      font-size: 13px; font-weight: 300; line-height: 1.85;
+      color: var(--muted);
+    }
+
+    /* ── RELATED POSTS ──────────────────────────────────────────── */
+    .related-section {
+      max-width: 800px; margin: 0 auto;
+      padding: 60px 48px 80px;
+      border-top: 1px solid var(--border);
+    }
+    .related-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px; font-weight: 300; letter-spacing: 0.1em;
+      color: var(--charcoal); margin-bottom: 36px;
+    }
+    .related-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    .related-card { cursor: pointer; }
+    .related-card-img {
+      width: 100%; aspect-ratio: 16/9;
+      overflow: hidden; background: #eee; margin-bottom: 16px;
+    }
+    .related-card-img img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform .7s cubic-bezier(.16,1,.3,1);
+      filter: grayscale(20%);
+    }
+    .related-card:hover .related-card-img img { transform: scale(1.06); filter: grayscale(0%); }
+    .related-card-tag {
+      font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 8px;
+    }
+    .related-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px; font-weight: 300; letter-spacing: 0.04em;
+      color: var(--charcoal); line-height: 1.3; margin-bottom: 8px;
+      transition: color .25s;
+    }
+    .related-card:hover .related-card-title { color: var(--gold); }
+    .related-card-date {
+      font-size: 10px; letter-spacing: 0.12em; color: var(--muted);
+    }
+
+    /* ── BACK TO TOP ────────────────────────────────────────────── */
+    .back-top {
+      position: fixed; bottom: 32px; right: 32px; z-index: 200;
+      width: 44px; height: 44px;
+      border: 1px solid var(--border); background: var(--white);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--charcoal);
+      opacity: 0; transform: translateY(12px);
+      transition: opacity .3s, transform .3s, border-color .25s, color .25s;
+      pointer-events: none;
+    }
+    .back-top.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
+    .back-top:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── SCROLL REVEAL ──────────────────────────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .blog-hero { padding: 48px 20px 36px; }
+      .article-wrap { padding: 0 20px 60px; }
+      .related-section { padding: 40px 20px 60px; }
+      .related-grid { grid-template-columns: 1fr; }
+      .author-card { flex-direction: column; }
+      .author-img { width: 90px; height: 90px; }
+      .article-tags { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Read progress bar -->
+  <div class="read-progress" id="readProgress"></div>
+
+  <!-- ── NAVBAR ──────────────────────────────────────────────────── -->
+  <header class="nav">
+    <a href="index.html" class="nav-logo">Satyasaar</a>
+ 
+    <a href="checkout.html" style="position:relative;display:flex;align-items:center;color:var(--charcoal);transition:color .25s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--charcoal)'">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 01-8 0"/>
+      </svg>
+    </a>
+  </header>
+
+  <!-- ── BLOG HERO HEADER ─────────────────────────────────────────── -->
+  <div class="blog-hero reveal">
+    <div class="blog-category">
+      <span>STHIR</span>
+      <span style="color:rgba(0,0,0,0.2);">/</span>
+      <span>12 FEB, 2026</span>
+    </div>
+    <h1 class="blog-title">Hanuman Sthir</h1>
+    <nav class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span class="breadcrumb-sep">/</span>
+      <a href="#">Pages</a>
+      <span class="breadcrumb-sep">/</span>
+      <span>Sthir</span>
+    </nav>
+  </div>
+
+  <!-- ── ARTICLE ─────────────────────────────────────────────────── -->
+  <div class="article-wrap">
+
+    <!-- Hero image -->
+    <figure class="article-hero-img reveal">
+      <img src="images/sthir-2.png" alt="Hanuman Sthir by Satyasaar"/>
+    </figure>
+
+    <!-- Body -->
+    <div class="article-body">
+
+      <p class="reveal">
+       This Is Not Just a Product.
+This Is a Beginning.
+There comes a moment in every young man’s life when the world quietly hands him
+a script.
+Study well.
+Get a safe job.
+Earn stability.
+Don’t take risks.
+Don’t dream too loudly.
+For many, that script becomes life.
+Some run behind titles.
+Some run behind salaries.
+Some run behind approval.
+And some… don’t even realize they are running.
+They call it responsibility.
+They call it practicality.
+They call it “this is how life works.”
+But deep inside, there is always a whisper:
+Is this really all I am capable of?
+We have seen it around us.
+Friends choosing paths they never truly wanted.
+Brilliant minds shrinking themselves to fit expectations.
+Dreams postponed in the name of “the right time.”
+Family pressure.
+Society pressure.
+Comparison.
+Fear.
+And slowly, the fire becomes smaller.
+Not because they are weak —
+but because the system rewards obedience more than originality.
+But then there are people who cannot sleep peacefully inside that script.
+People who feel uncomfortable choosing the safe road.
+People who know — even without proof — that they are meant to build something of
+their own.
+Not for ego.
+Not for noise.
+But for self-respect.
+For us, that discomfort became fuel.
+We are not backed by legacy.
+We are not backed by investors.
+We are not backed by guarantees.
+We are backed by belief.
+And sometimes, belief is heavier than capital.
+      </p>
+
+     
+      <!-- Inline image -->
+      <figure class="article-img reveal">
+        <img src="images/sthir-pr3.png" alt="Hanuman Sthir — detail view"/>
+        <figcaption>Hanuman Sthir — Bronze resin, hand-finished patina</figcaption>
+      </figure>
+
+      <!-- Pull quote -->
+      <div class="pull-quote reveal">
+        <p>"In a world obsessed with proving worth through paychecks,
+we chose to prove worth through creation.
+"</p>
+      </div>
+
+      <h2 class="reveal">STHIR represents something deeper than devotion.</h2>
+
+      <ul class="reveal reveal-delay-1">
+        <li>It represents steadiness when the world doubts you.</li>
+        <li>It represents discipline when motivation fades.</li>
+        <li>It represents strength that does not shake even when results are invisible.</li>
+      </ul>
+
+      <p class="reveal">
+       Because building something from nothing requires stillness.
+Not excitement.
+Not hype.
+Stillness.
+The kind of stillness where you keep working when nobody is watching.
+The kind where you continue when validation is absent.
+This brand is not a trend experiment.
+It is a long-term intention.
+We are not here to “try something.”
+We are here to build something.
+
+      </p>
+
+
+      <!-- Tags row -->
+      <div class="article-tags reveal">
+        <div class="tags-left">
+          STHIR HANUMAN SATYASAAR
+          <span class="tag-pill">Sculpture</span>
+          <span class="tag-pill">Hanuman</span>
+          <span class="tag-pill">Sthir</span>
+        </div>
+        <div class="tags-right">PEACE &nbsp; CALM &nbsp; STILLNESS</div>
+      </div>
+
+      <!-- Author -->
+      <div class="author-card reveal">
+        <div class="author-img">
+          <img src="images/rachit.png" alt="Rachit Jain" onerror="this.parentElement.style.background='linear-gradient(135deg,#e8e0d5,#c4b8a8)'; this.style.display='none'"/>
+        </div>
+        <div class="author-info">
+          <div class="author-name">Rachit Jain</div>
+          <div class="author-role">Founder (CEO)</div>
+          <p class="author-bio">
+           Rachit Jain is the Founder and CEO of Satyasaar, a luxury devotional art brand rooted in the timeless spirit of Indian craftsmanship. Rachit built Satyasaar to bridge the sacred and the contemporary bringing hand-crafted sculptures of profound spiritual significance into the homes of discerning collectors. With an unwavering belief that art should evoke stillness, purpose, and truth, he leads every aspect of the brand with the same devotion reflected in each piece. Satyasaar is not just his creation — it is his calling.
+          </p>
+        </div>
+      </div>
+
+    </div><!-- /article-body -->
+  </div><!-- /article-wrap -->
+
+  <!-- ── RELATED POSTS ────────────────────────────────────────────── -->
+  <section class="related-section">
+    <h2 class="related-heading reveal">More from the Journal</h2>
+    <div class="related-grid">
+
+      <div class="related-card reveal">
+        <div class="related-card-img">
+          <img src="images/sthir-product3.jpeg" alt="Related post" onerror="this.parentElement.style.background='linear-gradient(135deg,#e8e0d5,#c4b8a8)'; this.style.display='none'"/>
+        </div>
+        <div class="related-card-tag">Devotion</div>
+        <div class="related-card-title">The Stillness of Devotion — A Sculptor's Journey</div>
+        <div class="related-card-date">08 Feb, 2026</div>
+      </div>
+
+      <div class="related-card reveal reveal-delay-1">
+        <div class="related-card-img">
+          <img src="images/sthirproduct1.png" alt="Related post" onerror="this.parentElement.style.background='linear-gradient(135deg,#ccc4b8,#b0a090)'; this.style.display='none'"/>
+        </div>
+        <div class="related-card-tag">Craft</div>
+        <div class="related-card-title">Bronze Resin & the Art of the Antique Patina</div>
+        <div class="related-card-date">01 Feb, 2026</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Back to top -->
+  <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path d="M7 12V2M2 7l5-5 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+  </button>
+
+  <script>
+    /* ── READ PROGRESS BAR ──────────────────────────────────────── */
+    var progressBar = document.getElementById('readProgress');
+    var backTop     = document.getElementById('backTop');
+
+    window.addEventListener('scroll', function() {
+      var scrollTop  = document.documentElement.scrollTop || document.body.scrollTop;
+      var scrollH    = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      var pct        = scrollH > 0 ? (scrollTop / scrollH) * 100 : 0;
+      progressBar.style.width = pct + '%';
+
+      // Back-to-top visibility
+      if (scrollTop > 400) { backTop.classList.add('visible'); }
+      else                 { backTop.classList.remove('visible'); }
+    }, { passive: true });
+
+    /* ── SCROLL REVEAL (Intersection Observer) ──────────────────── */
+    var revealEls = document.querySelectorAll('.reveal');
+
+    var revealObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          revealObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    revealEls.forEach(function(el) { revealObs.observe(el); });
+  </script>
+
+</body>
+</html>

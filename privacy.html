@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Policy — Satyasaar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --cream:    #f7f4ef;
+      --charcoal: #1a1a1a;
+      --gold:     #b8965a;
+      --muted:    #7a7066;
+      --border:   rgba(0,0,0,0.08);
+      --white:    #ffffff;
+    }
+    html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--white);
+      color: var(--charcoal);
+      overflow-x: hidden;
+    }
+    body { animation: pageFade .5s ease both; }
+    @keyframes pageFade { from{opacity:0} to{opacity:1} }
+
+    /* ── READ PROGRESS ─────────────────────────────────────────── */
+    .read-bar {
+      position: fixed; top:0; left:0; height:2px;
+      width:0%; background: var(--gold); z-index:9999;
+      transition: width .1s linear;
+    }
+
+    /* ── NAV ───────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top:0; z-index:100;
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 0 52px; height: 62px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 19px; font-weight: 300;
+      letter-spacing: .28em; text-transform: uppercase;
+      color: var(--charcoal); text-decoration: none;
+      transition: color .25s;
+    }
+    .nav-logo:hover { color: var(--gold); }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-links a {
+      font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      position: relative; transition: color .25s;
+    }
+    .nav-links a::after {
+      content:''; position:absolute; bottom:-3px; left:0;
+      width:0; height:1px; background:var(--gold); transition: width .3s;
+    }
+    .nav-links a:hover { color: var(--charcoal); }
+    .nav-links a:hover::after { width:100%; }
+
+    /* ── HERO ──────────────────────────────────────────────────── */
+    .page-hero {
+      background: var(--charcoal);
+      padding: 80px 52px 72px;
+      position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content:''; position:absolute; inset:0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .page-hero::after {
+      content:'PRIVACY'; position:absolute; right:-20px; top:50%;
+      transform: translateY(-50%);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(80px,14vw,180px); font-weight:300;
+      letter-spacing: .06em; text-transform:uppercase;
+      color: rgba(255,255,255,0.03); pointer-events:none;
+      white-space:nowrap;
+    }
+    .hero-eyebrow {
+      font-size: 9px; letter-spacing: .32em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 18px;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px,5.5vw,72px); font-weight:300;
+      letter-spacing: .06em; text-transform:uppercase;
+      color: var(--white); line-height:1.05; margin-bottom:20px;
+    }
+    .hero-meta {
+      font-size: 10px; letter-spacing: .14em; color: rgba(255,255,255,0.35);
+      display: flex; gap:20px; flex-wrap:wrap;
+    }
+
+    /* ── LAYOUT ────────────────────────────────────────────────── */
+    .layout {
+      max-width: 1200px; margin: 0 auto;
+      padding: 72px 52px 100px;
+      display: grid; grid-template-columns: 220px 1fr; gap: 64px;
+      align-items: start;
+    }
+
+    /* ── SIDEBAR TOC ───────────────────────────────────────────── */
+    .toc { position: sticky; top: 90px; }
+    .toc-label {
+      font-size: 8px; font-weight:600; letter-spacing:.28em;
+      text-transform:uppercase; color:var(--gold);
+      margin-bottom: 16px; padding-bottom:10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .toc a {
+      display: block; font-size: 10px; letter-spacing:.1em;
+      color: var(--muted); text-decoration:none;
+      padding: 7px 0; border-left: 2px solid transparent;
+      padding-left: 12px; transition: color .2s, border-color .2s;
+    }
+    .toc a:hover, .toc a.active { color: var(--charcoal); border-left-color: var(--gold); }
+    .toc-back {
+      display: flex; align-items:center; gap:7px;
+      font-size: 9px; letter-spacing:.18em; text-transform:uppercase;
+      color: var(--muted); text-decoration:none;
+      margin-top: 28px; transition: color .25s;
+    }
+    .toc-back:hover { color: var(--gold); }
+
+    /* ── CONTENT ───────────────────────────────────────────────── */
+    .content section {
+      margin-bottom: 56px;
+      opacity:0; transform: translateY(20px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .content section.visible { opacity:1; transform:none; }
+
+    .section-num {
+      font-size: 9px; letter-spacing:.3em; text-transform:uppercase;
+      color: var(--gold); margin-bottom:10px;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px,2.4vw,30px); font-weight:300;
+      letter-spacing:.06em; color:var(--charcoal);
+      margin-bottom: 20px; padding-bottom:14px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .section-title::before {
+      content:''; position:absolute; bottom:-1px; left:0;
+      width: 36px; height:1px; background: var(--gold);
+    }
+
+    .content p {
+      font-size: 13px; font-weight:300; line-height:2;
+      color: #5a5550; margin-bottom:18px; letter-spacing:.01em;
+    }
+    .content ul {
+      list-style: none; margin: 8px 0 20px; display:flex; flex-direction:column; gap:10px;
+    }
+    .content ul li {
+      font-size: 13px; font-weight:300; line-height:1.8;
+      color: #5a5550; padding-left:22px; position:relative;
+    }
+    .content ul li::before {
+      content:'—'; position:absolute; left:0;
+      color: var(--gold); font-size:11px; line-height:1.9;
+    }
+    .content strong { font-weight:500; color:var(--charcoal); }
+    .content a { color:var(--gold); text-decoration:none; border-bottom:1px solid rgba(184,150,90,0.3); transition: border-color .25s; }
+    .content a:hover { border-color:var(--gold); }
+
+    /* Highlight box */
+    .highlight-box {
+      background: var(--cream); border-left: 3px solid var(--gold);
+      padding: 18px 22px; margin: 24px 0;
+    }
+    .highlight-box p { margin-bottom:0; font-size:12px; color:var(--muted); }
+
+    /* Contact box */
+    .contact-box {
+      background: var(--charcoal); padding:32px;
+      margin-top: 24px;
+    }
+    .contact-box h4 {
+      font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:300;
+      letter-spacing:.08em; color:var(--white); margin-bottom:14px;
+    }
+    .contact-box p { color:rgba(255,255,255,0.55); font-size:12px; margin-bottom:8px; }
+    .contact-box a { color:var(--gold); border-color:rgba(184,150,90,0.3); }
+
+    /* ── FOOTER ────────────────────────────────────────────────── */
+    footer {
+      background: var(--charcoal); border-top:1px solid rgba(255,255,255,0.06);
+      padding: 32px 52px;
+      display: flex; align-items:center; justify-content:space-between;
+      flex-wrap:wrap; gap:16px;
+    }
+    footer span { font-size:10px; letter-spacing:.12em; color:rgba(255,255,255,0.3); }
+    .footer-links { display:flex; gap:24px; }
+    .footer-links a {
+      font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+      color:rgba(255,255,255,0.35); text-decoration:none; transition:color .25s;
+    }
+    .footer-links a:hover, .footer-links a.current { color:var(--gold); }
+
+    /* ── BACK TO TOP ───────────────────────────────────────────── */
+    .back-top {
+      position:fixed; bottom:28px; right:28px; z-index:200;
+      width:42px; height:42px;
+      background:var(--white); border:1px solid var(--border);
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+      color:var(--charcoal); opacity:0; transform:translateY(10px);
+      transition: opacity .3s, transform .3s, border-color .25s, color .25s;
+      pointer-events:none;
+    }
+    .back-top.vis { opacity:1; transform:none; pointer-events:all; }
+    .back-top:hover { border-color:var(--gold); color:var(--gold); }
+
+    /* ── RESPONSIVE ────────────────────────────────────────────── */
+    @media (max-width:900px) {
+      .layout { grid-template-columns:1fr; padding:40px 24px 60px; }
+      .toc { display:none; }
+      nav { padding:0 24px; }
+      .nav-links { display:none; }
+      .page-hero { padding:52px 24px 48px; }
+      footer { padding:24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="read-bar" id="readBar"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Satyasaar</a>
+  <!-- <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="product.html">Shop</a>
+    <a href="blog.html">Journal</a>
+    <a href="terms.html">Terms</a>
+  </div> -->
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="hero-eyebrow">Legal</div>
+  <h1 class="hero-title">Privacy Policy</h1>
+  <div class="hero-meta">
+    <span>Effective: 22 February 2026</span>
+    <span>·</span>
+    <span>Last Updated: 22 February 2026</span>
+    <span>·</span>
+    <span>Version 1.0</span>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- TOC SIDEBAR -->
+  <aside class="toc" id="toc">
+    <div class="toc-label">Contents</div>
+    <a href="#s1">1. Information We Collect</a>
+    <a href="#s2">2. How We Use It</a>
+    <a href="#s3">3. Sharing & Disclosure</a>
+    <a href="#s4">4. Cookies</a>
+    <a href="#s5">5. Payment Security</a>
+    <a href="#s6">6. Data Retention</a>
+    <a href="#s7">7. Your Rights</a>
+    <a href="#s8">8. Children's Privacy</a>
+    <a href="#s9">9. Third-Party Links</a>
+    <a href="#s10">10. Changes to Policy</a>
+    <a href="#s11">11. Contact Us</a>
+    <a href="terms.html" class="toc-back">
+      <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5h10M7 1l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      Terms & Conditions
+    </a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="content">
+
+    <div class="highlight-box">
+      <p><strong>In plain language:</strong> Satyasaar collects only what is necessary to process your orders and improve your shopping experience. We do not sell your personal data to anyone, ever. This policy explains what we collect, why, and how you can control it.</p>
+    </div>
+
+    <section id="s1">
+      <div class="section-num">01</div>
+      <h2 class="section-title">Information We Collect</h2>
+      <p>When you visit our website or place an order, we collect information in the following ways:</p>
+      <p><strong>Information you provide directly:</strong></p>
+      <ul>
+        <li>Name, email address, phone number and delivery address when placing an order</li>
+        <li>Payment details (processed securely through Razorpay — we never store card numbers or CVV)</li>
+        <li>Messages and enquiries you send to us via email or contact forms</li>
+        <li>Newsletter subscription preferences</li>
+      </ul>
+      <p><strong>Information collected automatically:</strong></p>
+      <ul>
+        <li>Browser type, device type and operating system</li>
+        <li>IP address and approximate geographic location</li>
+        <li>Pages viewed, time spent, and links clicked on our website</li>
+        <li>Referring website or source through which you found us</li>
+      </ul>
+    </section>
+
+    <section id="s2">
+      <div class="section-num">02</div>
+      <h2 class="section-title">How We Use Your Information</h2>
+      <p>We use the information we collect solely for legitimate business purposes:</p>
+      <ul>
+        <li>To process, fulfil and dispatch your orders, and send you order confirmations and shipping updates</li>
+        <li>To respond to your customer service enquiries promptly and effectively</li>
+        <li>To send marketing communications — only if you have subscribed and only about Satyasaar products and offers</li>
+        <li>To improve our website's functionality, product range and customer experience</li>
+        <li>To comply with applicable legal obligations and prevent fraud</li>
+        <li>To administer our loyalty programmes, promotions and special events</li>
+      </ul>
+      <p>We will never use your data for automated profiling that produces legal or similarly significant effects without your explicit consent.</p>
+    </section>
+
+    <section id="s3">
+      <div class="section-num">03</div>
+      <h2 class="section-title">Sharing & Disclosure</h2>
+      <p>Satyasaar does not sell, rent or trade your personal data. We share it only in these limited circumstances:</p>
+      <ul>
+        <li><strong>Logistics partners:</strong> Your name, phone number and address are shared with our courier and delivery partners solely to fulfil your order</li>
+        <li><strong>Payment processors:</strong> Razorpay receives the information necessary to process your payment — governed by their own privacy policy</li>
+        <li><strong>Technology providers:</strong> Our website and order management infrastructure is supported by Supabase for secure data storage</li>
+        <li><strong>Legal requirements:</strong> We may disclose information if required to do so by law, court order or governmental authority</li>
+        <li><strong>Business transfers:</strong> In the event of a merger or acquisition, personal data may be transferred as part of business assets, with prior notice</li>
+      </ul>
+      <p>All third parties with whom we share data are contractually obligated to use it only for the specified purpose and to protect it with appropriate security measures.</p>
+    </section>
+
+    <section id="s4">
+      <div class="section-num">04</div>
+      <h2 class="section-title">Cookies</h2>
+      <p>Our website uses cookies — small text files stored in your browser — to improve your experience and understand how visitors use our site.</p>
+      <ul>
+        <li><strong>Essential cookies:</strong> Required for the website to function. These include your shopping cart contents and session data. They cannot be disabled.</li>
+        <li><strong>Analytics cookies:</strong> Help us understand traffic patterns and improve our site. We use anonymised data only.</li>
+        <li><strong>Marketing cookies:</strong> Used only if you have consented, to show you relevant content about Satyasaar.</li>
+      </ul>
+      <p>You may disable non-essential cookies through your browser settings at any time. Please note that doing so may affect certain website features.</p>
+    </section>
+
+    <section id="s5">
+      <div class="section-num">05</div>
+      <h2 class="section-title">Payment Security</h2>
+      <p>All payments on the Satyasaar website are processed through <strong>Razorpay</strong>, a PCI-DSS Level 1 certified payment gateway. This is the highest level of security certification in the payments industry.</p>
+      <div class="highlight-box">
+        <p>Satyasaar never stores, processes or transmits your full card number, CVV or banking credentials on our servers. All sensitive payment data is handled exclusively by Razorpay's encrypted systems.</p>
+      </div>
+      <p>All data transmitted between your browser and our website is encrypted using 256-bit SSL (Secure Socket Layer) technology. Look for the padlock icon in your browser's address bar when shopping with us.</p>
+    </section>
+
+    <section id="s6">
+      <div class="section-num">06</div>
+      <h2 class="section-title">Data Retention</h2>
+      <p>We retain your personal data only for as long as necessary to fulfil the purposes for which it was collected:</p>
+      <ul>
+        <li>Order records are retained for 7 years in compliance with Indian tax and accounting regulations</li>
+        <li>Customer account data is retained until you request deletion</li>
+        <li>Marketing preferences and communication history are retained until you unsubscribe</li>
+        <li>Analytics data is retained in anonymised form for up to 24 months</li>
+      </ul>
+      <p>When data is no longer required, it is securely deleted or anonymised so that it can no longer be associated with you.</p>
+    </section>
+
+    <section id="s7">
+      <div class="section-num">07</div>
+      <h2 class="section-title">Your Rights</h2>
+      <p>You have the following rights regarding your personal data, in accordance with applicable data protection laws:</p>
+      <ul>
+        <li><strong>Right to access:</strong> Request a copy of the personal data we hold about you</li>
+        <li><strong>Right to rectification:</strong> Ask us to correct inaccurate or incomplete information</li>
+        <li><strong>Right to erasure:</strong> Request deletion of your personal data, subject to legal obligations</li>
+        <li><strong>Right to restrict processing:</strong> Ask us to limit how we use your data in certain circumstances</li>
+        <li><strong>Right to data portability:</strong> Receive your data in a structured, machine-readable format</li>
+        <li><strong>Right to object:</strong> Object to processing for marketing purposes at any time</li>
+        <li><strong>Right to withdraw consent:</strong> Withdraw previously given consent without affecting prior processing</li>
+      </ul>
+      <p>To exercise any of these rights, please contact us at <a href="mailto:care@satyasaar.com">care@satyasaar.com</a>. We will respond within 30 days.</p>
+    </section>
+
+    <section id="s8">
+      <div class="section-num">08</div>
+      <h2 class="section-title">Children's Privacy</h2>
+      <p>Satyasaar's website and services are not directed at children under the age of 18. We do not knowingly collect personal information from minors. If you believe a child has provided us with personal data, please contact us immediately and we will delete it promptly.</p>
+    </section>
+
+    <section id="s9">
+      <div class="section-num">09</div>
+      <h2 class="section-title">Third-Party Links</h2>
+      <p>Our website may contain links to third-party websites, social media platforms and partner services. These links are provided for your convenience and do not constitute an endorsement. We have no control over the content or privacy practices of these external sites and encourage you to review their privacy policies before providing any personal information.</p>
+    </section>
+
+    <section id="s10">
+      <div class="section-num">10</div>
+      <h2 class="section-title">Changes to This Policy</h2>
+      <p>Satyasaar reserves the right to update this Privacy Policy at any time to reflect changes in our practices, technology or applicable law. When we make material changes, we will:</p>
+      <ul>
+        <li>Update the "Last Updated" date at the top of this page</li>
+        <li>Notify registered customers by email for significant changes</li>
+        <li>Display a prominent notice on the website homepage for 30 days</li>
+      </ul>
+      <p>Continued use of our website following notification of changes constitutes your acceptance of the revised policy.</p>
+    </section>
+
+    <section id="s11">
+      <div class="section-num">11</div>
+      <h2 class="section-title">Contact Us</h2>
+      <p>If you have any questions, concerns or requests regarding this Privacy Policy or your personal data, please reach out:</p>
+      <div class="contact-box">
+        <h4>Satyasaar — Privacy Office</h4>
+        <p>Email: <a href="mailto:care@satyasaar.com">care@satyasaar.com</a></p>
+        <p>Response time: Within 2–3 business days</p>
+        <p style="margin-top:14px;font-size:11px;">For urgent data protection matters, please mark your email subject line: <strong style="color:var(--white)">PRIVACY REQUEST</strong></p>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+</div><!-- /layout -->
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 Satyasaar. All rights reserved.</span>
+  <div class="footer-links">
+    <a href="privacy.html" class="current">Privacy Policy</a>
+    <a href="terms.html">Terms & Conditions</a>
+    <a href="index.html">Home</a>
+    <a href="product.html">Shop</a>
+  </div>
+</footer>
+
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+  <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 12V2M2 7l5-5 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+</button>
+
+<script>
+  // Read progress bar
+  var bar = document.getElementById('readBar');
+  var bt  = document.getElementById('backTop');
+  window.addEventListener('scroll', function() {
+    var st = document.documentElement.scrollTop;
+    var sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    bar.style.width = (sh > 0 ? st/sh*100 : 0) + '%';
+    bt.classList.toggle('vis', st > 400);
+  }, { passive:true });
+
+  // Scroll reveal
+  var sections = document.querySelectorAll('.content section');
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) { if(e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  sections.forEach(function(s){ obs.observe(s); });
+
+  // TOC active highlight
+  var tocLinks = document.querySelectorAll('.toc a[href^="#"]');
+  window.addEventListener('scroll', function() {
+    var fromTop = window.scrollY + 120;
+    sections.forEach(function(sec) {
+      var link = document.querySelector('.toc a[href="#'+sec.id+'"]');
+      if (!link) return;
+      if (sec.offsetTop <= fromTop && sec.offsetTop + sec.offsetHeight > fromTop) {
+        tocLinks.forEach(function(l){ l.classList.remove('active'); });
+        link.classList.add('active');
+      }
+    });
+  }, { passive:true });
+</script>
+</body>
+</html>

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hanuman Sthir</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cream:    #f7f4ef;
+      --charcoal: #1a1a1a;
+      --gold:     #b8965a;
+      --muted:    #7a7066;
+      --border:   rgba(0,0,0,0.1);
+      --white:    #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--white);
+      color: var(--charcoal);
+      overflow-x: hidden;
+    }
+
+    /* ── MINI NAV ──────────────────────────────────────────────── */
+    .mini-nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 48px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .mini-nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px; font-weight: 300;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--charcoal); text-decoration: none;
+    }
+    .breadcrumb {
+      font-size: 10px; letter-spacing: 0.14em; color: var(--muted);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb a { color: var(--muted); text-decoration: none; transition: color .25s; }
+    .breadcrumb a:hover { color: var(--gold); }
+    .breadcrumb span { color: var(--charcoal); }
+
+    /* Cart icon in nav */
+    .nav-cart-link {
+      position: relative;
+      display: flex; align-items: center;
+      text-decoration: none; color: var(--charcoal);
+      transition: color .25s;
+    }
+    .nav-cart-link:hover { color: var(--gold); }
+    .nav-cart-badge {
+      display: none;
+      position: absolute; top: -8px; right: -9px;
+      width: 17px; height: 17px; border-radius: 50%;
+      background: var(--gold); color: var(--white);
+      font-size: 9px; font-family: 'Montserrat', sans-serif;
+      font-weight: 500; letter-spacing: 0;
+      align-items: center; justify-content: center;
+    }
+
+    /* ── PRODUCT LAYOUT ────────────────────────────────────────── */
+    .product-page { max-width: 1340px; margin: 0 auto; padding: 52px 48px 0; }
+    .product-main {
+      display: grid;
+      grid-template-columns: 130px 1fr 1fr;
+      gap: 28px; align-items: start;
+    }
+
+    /* ── THUMBNAILS ────────────────────────────────────────────── */
+    .thumbs { display: flex; flex-direction: column; gap: 14px; }
+
+    .thumb {
+      position: relative;
+      width: 100%; aspect-ratio: 1;
+      border: 1px solid transparent;
+      overflow: hidden; cursor: pointer;
+      background: #f0ece6;
+      transition: border-color .3s;
+      flex-shrink: 0;
+    }
+    .thumb.active { border-color: var(--charcoal); }
+    .thumb:hover  { border-color: var(--gold); }
+
+    .thumb-placeholder {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, #e8e0d5 0%, #d5ccc0 100%);
+      z-index: 0;
+    }
+    .thumb img {
+      position: relative; z-index: 1;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      display: block;
+      transition: transform .5s ease;
+    }
+    .thumb:hover img { transform: scale(1.06); }
+
+    /* ── MAIN IMAGE ────────────────────────────────────────────── */
+    .main-image-wrap {
+      position: relative; background: #f0ece6;
+      overflow: hidden; aspect-ratio: 3 / 4; cursor: zoom-in;
+    }
+    .main-placeholder {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, #e8e3da 0%, #ccc4b8 100%);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 0;
+    }
+    .main-placeholder span {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px; letter-spacing: 0.18em; color: rgba(0,0,0,0.3);
+    }
+    #mainImg {
+      position: relative; z-index: 1;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      display: block;
+      transition: transform .6s cubic-bezier(.16,1,.3,1);
+    }
+    .main-image-wrap:hover #mainImg { transform: scale(1.08); }
+
+    .zoom-lens {
+      position: absolute;
+      width: 100px; height: 100px;
+      border: 1px solid rgba(255,255,255,0.6);
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0;
+      background: rgba(255,255,255,0.12);
+      z-index: 5;
+      transform: translate(-50%, -50%);
+      transition: opacity .2s;
+    }
+    .main-image-wrap:hover .zoom-lens { opacity: 1; }
+
+    .img-dots {
+      position: absolute; bottom: 16px;
+      left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 4;
+    }
+    .img-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(0,0,0,0.25);
+      cursor: pointer; transition: background .25s;
+    }
+    .img-dot.active { background: var(--charcoal); }
+
+    /* ── PRODUCT INFO ──────────────────────────────────────────── */
+    .product-info { padding-top: 8px; }
+    .product-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 3.5vw, 52px); font-weight: 300;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--charcoal); line-height: 1.1; margin-bottom: 26px;
+    }
+    .product-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 2vw, 30px); font-weight: 400;
+      letter-spacing: 0.06em; color: var(--gold); margin-bottom: 28px;
+    }
+    .product-desc {
+      font-size: 12px; font-weight: 300; line-height: 1.9;
+      color: var(--muted); margin-bottom: 36px; max-width: 440px;
+    }
+    .stock-info {
+      font-size: 11px; letter-spacing: 0.1em; color: var(--charcoal);
+      margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+    }
+    .stock-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #5aaa6a; flex-shrink: 0;
+    }
+
+    /* ── ACTIONS ───────────────────────────────────────────────── */
+    .product-actions {
+      display: flex; align-items: center;
+      gap: 12px; margin-bottom: 36px; flex-wrap: wrap;
+    }
+    .qty-wrap { display: flex; align-items: center; border: 1px solid var(--border); }
+    .qty-btn {
+      width: 42px; height: 52px;
+      background: none; border: none;
+      font-size: 20px; font-weight: 300;
+      color: var(--charcoal); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .25s, color .25s;
+      user-select: none;
+    }
+    .qty-btn:hover { background: var(--charcoal); color: var(--white); }
+    .qty-input {
+      width: 52px; height: 52px; border: none;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      text-align: center;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px; letter-spacing: 0.08em;
+      color: var(--charcoal); outline: none;
+      background: var(--white);
+      -moz-appearance: textfield;
+    }
+    .qty-input::-webkit-inner-spin-button,
+    .qty-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    .add-to-cart-btn {
+      flex: 1; min-width: 180px; height: 52px;
+      background: var(--charcoal); color: var(--white);
+      border: 1px solid var(--charcoal);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      cursor: pointer; white-space: nowrap;
+      transition: background .35s, color .35s, letter-spacing .3s;
+    }
+    .add-to-cart-btn:hover {
+      background: var(--white); color: var(--charcoal); letter-spacing: 0.36em;
+    }
+    .wishlist-btn {
+      width: 52px; height: 52px;
+      border: 1px solid var(--border); background: none;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--charcoal); transition: border-color .3s, color .3s;
+    }
+    .wishlist-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    .product-meta {
+      border-top: 1px solid var(--border); padding-top: 20px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .meta-row { font-size: 11px; letter-spacing: 0.08em; color: var(--muted); display: flex; gap: 6px; }
+    .meta-row strong { font-weight: 500; color: var(--charcoal); text-transform: uppercase; }
+
+    /* ── TABS ──────────────────────────────────────────────────── */
+    .tabs-section { max-width: 1340px; margin: 0 auto; padding: 72px 48px 80px; }
+    .tab-header {
+      display: flex; border-bottom: 1px solid var(--border);
+      margin-bottom: 48px; overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 16px 52px; background: none; border: none;
+      border-bottom: 2px solid transparent;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px; font-weight: 400;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--muted); cursor: pointer; white-space: nowrap;
+      transition: color .25s, border-color .25s;
+      position: relative; bottom: -1px;
+    }
+    .tab-btn.active { color: var(--charcoal); border-bottom-color: var(--charcoal); }
+    .tab-btn:hover  { color: var(--charcoal); }
+
+    .tab-pane { display: none; max-width: 860px; }
+    .tab-pane.active { display: block; animation: fadeIn .4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    .tab-pane h3 {
+      font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 400;
+      letter-spacing: 0.06em; color: var(--charcoal); margin-bottom: 20px;
+    }
+    .tab-pane p { font-size: 13px; font-weight: 300; line-height: 1.95; color: var(--muted); margin-bottom: 20px; }
+    .tab-pane ul { list-style: none; margin-bottom: 24px; display: flex; flex-direction: column; gap: 10px; }
+    .tab-pane ul li { font-size: 13px; font-weight: 300; line-height: 1.7; color: var(--muted); padding-left: 18px; position: relative; }
+    .tab-pane ul li::before { content: '•'; position: absolute; left: 0; color: var(--gold); }
+
+    .info-table { width: 100%; border-collapse: collapse; }
+    .info-table tr { border-bottom: 1px solid var(--border); }
+    .info-table td { padding: 14px 0; font-size: 12px; font-weight: 300; letter-spacing: 0.06em; color: var(--muted); }
+    .info-table td:first-child { font-weight: 500; color: var(--charcoal); text-transform: uppercase; letter-spacing: 0.14em; font-size: 10px; width: 180px; }
+
+    .shipping-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-bottom: 28px; }
+    .shipping-box { border: 1px solid var(--border); padding: 28px 24px; }
+    .shipping-box-icon { font-size: 22px; margin-bottom: 12px; }
+    .shipping-box h4 { font-size: 11px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--charcoal); margin-bottom: 8px; }
+    .shipping-box p  { font-size: 11px; margin-bottom: 0; }
+
+    /* ── ZOOM MODAL ────────────────────────────────────────────── */
+    .zoom-modal {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 9999; display: none;
+      align-items: center; justify-content: center;
+    }
+    .zoom-modal.open { display: flex; }
+    .zoom-modal img { max-width: 90vw; max-height: 90vh; object-fit: contain; display: block; }
+    .zoom-close {
+      position: absolute; top: 28px; right: 36px;
+      background: none; border: none;
+      color: var(--white); font-size: 36px;
+      cursor: pointer; font-weight: 200; line-height: 1;
+    }
+
+    /* ── RESPONSIVE ────────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .product-main { grid-template-columns: 90px 1fr 1fr; gap: 18px; }
+    }
+    @media (max-width: 768px) {
+      .mini-nav { padding: 0 20px; }
+      .breadcrumb { display: none; }
+      .product-page { padding: 28px 20px 0; }
+      .product-main { grid-template-columns: 1fr; gap: 0; }
+      .thumbs { order: 2; flex-direction: row; gap: 10px; padding: 14px 0 0; overflow-x: auto; }
+      .thumb { width: 72px; height: 72px; }
+      .main-image-wrap { order: 1; aspect-ratio: 4 / 3; }
+      .product-info { order: 3; padding-top: 28px; }
+      .add-to-cart-btn { min-width: 140px; }
+      .shipping-grid { grid-template-columns: 1fr; }
+      .tabs-section { padding: 40px 20px 60px; }
+      .tab-btn { padding: 14px 20px; font-size: 9px; }
+    }
+    @media (max-width: 480px) {
+      .product-actions { gap: 10px; }
+      .qty-btn { width: 36px; height: 46px; }
+      .qty-input { width: 44px; height: 46px; }
+      .add-to-cart-btn { height: 46px; font-size: 9px; }
+      .wishlist-btn { width: 46px; height: 46px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── MINI NAV ─────────────────────────────────────────────── -->
+  <header class="mini-nav">
+    <a href="index.html" class="mini-nav-logo">SATYASAAR</a>
+
+    <nav class="breadcrumb">
+      <a href="index.html">Home</a>
+      <svg width="6" height="10" viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="currentColor" stroke-width="1"/></svg>
+      <a href="#">Sculptures</a>
+      <svg width="6" height="10" viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="currentColor" stroke-width="1"/></svg>
+      <span>Hanuman Sthir</span>
+    </nav>
+
+    <!-- Cart icon → links to checkout.html -->
+    <a href="checkout.html" class="nav-cart-link" id="cartLink">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 01-8 0"/>
+      </svg>
+      <span class="nav-cart-badge" id="cartBadge">0</span>
+    </a>
+  </header>
+
+  <!-- ── PRODUCT MAIN ─────────────────────────────────────────── -->
+  <div class="product-page">
+    <div class="product-main">
+
+      <!-- Thumbnails -->
+      <div class="thumbs">
+        <div class="thumb active" data-index="0">
+          <div class="thumb-placeholder"></div>
+          <img src="images/sthirproduct1.png" alt="View 1"/>
+        </div>
+        <div class="thumb" data-index="1">
+          <div class="thumb-placeholder"></div>
+          <img src="images/sthir-product2.png" alt="View 2"/>
+        </div>
+        <div class="thumb" data-index="2">
+          <div class="thumb-placeholder"></div>
+          <img src="images/sthir-product3.jpeg" alt="View 3"/>
+        </div>
+      </div>
+
+      <!-- Main Image -->
+      <div class="main-image-wrap" id="mainImgWrap">
+        <div class="main-placeholder"><span>Product Image</span></div>
+        <img id="mainImg" src="images/sthirproduct1.png" alt="Hanuman Sthir"/>
+        <div class="zoom-lens" id="zoomLens"></div>
+        <div class="img-dots">
+          <div class="img-dot active" data-index="0"></div>
+          <div class="img-dot" data-index="1"></div>
+          <div class="img-dot" data-index="2"></div>
+        </div>
+      </div>
+
+      <!-- Product Info -->
+      <div class="product-info">
+        <h1 class="product-name">Hanuman Sthir</h1>
+        <p class="product-price">INR 25,800</p>
+        <p class="product-desc">
+          Tristique ullamcorper nunc egestas non. Justo, cum feugiat imperdiet nulla molestie
+          ac vulputate scelerisque amet. Bibendum adipiscing platea blandit sit sed quam semper
+          rhoncus. Diam ultrices maecenas consequat eu tortor. Orci, cras lectus mauris, cras
+          egestas quam venenatis neque.
+        </p>
+        <div class="stock-info">
+          <div class="stock-dot"></div>
+          Limited Edition
+        </div>
+        <div class="product-actions">
+          <div class="qty-wrap">
+            <button class="qty-btn" id="qtyMinus">&#8722;</button>
+            <input type="text" class="qty-input" id="qtyInput" value="1" readonly/>
+            <button class="qty-btn" id="qtyPlus">&#43;</button>
+          </div>
+          <button class="add-to-cart-btn" id="addToCartBtn">Add to Cart</button>
+          <button class="wishlist-btn" aria-label="Wishlist">
+            <svg width="18" height="17" viewBox="0 0 24 22" fill="none">
+              <path d="M12 20.5C12 20.5 2 13.5 2 7C2 4.2 4.2 2 7 2C8.9 2 10.6 3 11.6 4.5C11.8 4.8 12.2 4.8 12.4 4.5C13.4 3 15.1 2 17 2C19.8 2 22 4.2 22 7C22 13.5 12 20.5 12 20.5Z" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+          </button>
+        </div>
+        <div class="product-meta">
+          <div class="meta-row"><strong>SKU:</strong> HAN-STHIR-001</div>
+          <div class="meta-row"><strong>Category:</strong> Sculptures &amp; Idols</div>
+          <div class="meta-row"><strong>Material:</strong> Resin, Hand-painted Bronze Finish</div>
+          <div class="meta-row"><strong>Dimensions:</strong> 14 × 10 × 8 cm</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── TABS ─────────────────────────────────────────────────── -->
+  <section class="tabs-section">
+    <div class="tab-header">
+      <button class="tab-btn active" data-tab="description">Description</button>
+      <button class="tab-btn" data-tab="additional">Additional Information</button>
+      <button class="tab-btn" data-tab="shipping">Shipping &amp; Return</button>
+    </div>
+
+    <div class="tab-pane active" id="tab-description">
+      <h3>Product Description</h3>
+      <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis. Phasellus ultrices nulla quis nibh. Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus.</p>
+      <ul>
+        <li>Donec nec justo eget felis facilisis fermentum.</li>
+        <li>Suspendisse urna viverra non, semper suscipit pede.</li>
+        <li>Aliquam porttitor mauris sit amet orci.</li>
+        <li>Hand-crafted with exceptional attention to detail.</li>
+      </ul>
+      <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci.</p>
+    </div>
+
+    <div class="tab-pane" id="tab-additional">
+      <h3>Additional Information</h3>
+      <table class="info-table">
+        <tr><td>Weight</td><td>1.2 kg</td></tr>
+        <tr><td>Dimensions</td><td>14 × 10 × 8 cm</td></tr>
+        <tr><td>Material</td><td>Resin, Hand-painted Bronze Finish</td></tr>
+        <tr><td>Colour</td><td>Bronze / Brown</td></tr>
+        <tr><td>Finish</td><td>Matte with Antique Patina</td></tr>
+        <tr><td>Care</td><td>Wipe with a dry or slightly damp cloth</td></tr>
+        <tr><td>Country of Origin</td><td>India</td></tr>
+        <tr><td>Packaging</td><td>Luxury gift box included</td></tr>
+      </table>
+    </div>
+
+    <div class="tab-pane" id="tab-shipping">
+      <h3>Shipping &amp; Return</h3>
+      <div class="shipping-grid">
+        <div class="shipping-box">
+          <div class="shipping-box-icon">🚚</div>
+          <h4>Free Shipping</h4>
+          <p>Complimentary shipping on all orders above INR 2,000. Standard delivery in 5–7 business days.</p>
+        </div>
+        <div class="shipping-box">
+          <div class="shipping-box-icon">📦</div>
+          <h4>Secure Packaging</h4>
+          <p>Every piece is wrapped in archival tissue, nested in rigid foam and shipped in a signature gift box.</p>
+        </div>
+        <div class="shipping-box">
+          <div class="shipping-box-icon">↩</div>
+          <h4>Easy Returns</h4>
+          <p>Not satisfied? We accept returns within 14 days of delivery. Items must be unused and in original packaging.</p>
+        </div>
+      </div>
+      <p>For international orders, shipping rates and delivery times vary by destination. Contact us at <strong>care@satyasaar.com</strong> for express or white-glove delivery options.</p>
+    </div>
+  </section>
+
+  <!-- ── ZOOM MODAL ──────────────────────────────────────────── -->
+  <div class="zoom-modal" id="zoomModal">
+    <button class="zoom-close" id="zoomClose">&#215;</button>
+    <img id="zoomImg" src="" alt="Zoomed view"/>
+  </div>
+
+  <script>
+    /* ============================================================
+       PRODUCT DATA  — edit these to match your product
+    ============================================================ */
+    var PRODUCT = {
+      id:    'HAN-STHIR-001',
+      name:  'Hanuman Sthir',
+      price: 25800,
+      image: 'images/sthirproduct1.png'
+    };
+
+    var images = [
+      'images/sthirproduct1.png',
+      'images/sthir-product2.png',
+      'images/sthir-product3.jpeg'
+    ];
+    var currentIndex = 0;
+    var maxStock     = 80;
+
+    /* ============================================================
+       CART HELPERS  (localStorage, key = 'me_cart')
+    ============================================================ */
+    function getCart() {
+      try { return JSON.parse(localStorage.getItem('me_cart') || '[]'); }
+      catch (e) { return []; }
+    }
+    function saveCart(cart) {
+      localStorage.setItem('me_cart', JSON.stringify(cart));
+    }
+    function refreshBadge() {
+      var cart  = getCart();
+      var total = cart.reduce(function(s, i) { return s + i.qty; }, 0);
+      var badge = document.getElementById('cartBadge');
+      if (total > 0) {
+        badge.textContent    = total;
+        badge.style.display  = 'flex';
+      } else {
+        badge.style.display  = 'none';
+      }
+    }
+
+    /* ============================================================
+       IMAGE SWITCHING
+    ============================================================ */
+    var thumbEls = document.querySelectorAll('.thumb');
+    var dotEls   = document.querySelectorAll('.img-dot');
+    var mainImg  = document.getElementById('mainImg');
+
+    function selectImage(index) {
+      currentIndex = index;
+      thumbEls.forEach(function(t, i) { t.classList.toggle('active', i === index); });
+      dotEls.forEach(function(d, i)   { d.classList.toggle('active', i === index); });
+      if (images[index]) { mainImg.src = images[index]; }
+    }
+
+    thumbEls.forEach(function(thumb) {
+      thumb.addEventListener('click', function() {
+        selectImage(parseInt(this.getAttribute('data-index')));
+      });
+    });
+    dotEls.forEach(function(dot) {
+      dot.addEventListener('click', function(e) {
+        e.stopPropagation();
+        selectImage(parseInt(this.getAttribute('data-index')));
+      });
+    });
+
+    /* ============================================================
+       ZOOM MODAL
+    ============================================================ */
+    var mainWrap  = document.getElementById('mainImgWrap');
+    var modal     = document.getElementById('zoomModal');
+    var zoomImg   = document.getElementById('zoomImg');
+    var zoomClose = document.getElementById('zoomClose');
+
+    mainWrap.addEventListener('click', function() {
+      if (images[currentIndex]) {
+        zoomImg.src = images[currentIndex];
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+    function closeZoom() {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    zoomClose.addEventListener('click', function(e) { e.stopPropagation(); closeZoom(); });
+    modal.addEventListener('click', closeZoom);
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeZoom(); });
+
+    /* ============================================================
+       MAGNIFIER LENS
+    ============================================================ */
+    var lens = document.getElementById('zoomLens');
+    mainWrap.addEventListener('mousemove', function(e) {
+      var r = mainWrap.getBoundingClientRect();
+      lens.style.left = (e.clientX - r.left) + 'px';
+      lens.style.top  = (e.clientY - r.top)  + 'px';
+    });
+
+    /* ============================================================
+       QUANTITY
+    ============================================================ */
+    var qtyInput = document.getElementById('qtyInput');
+
+    document.getElementById('qtyMinus').addEventListener('click', function() {
+      var v = parseInt(qtyInput.value);
+      if (v > 1) { qtyInput.value = v - 1; }
+    });
+    document.getElementById('qtyPlus').addEventListener('click', function() {
+      var v = parseInt(qtyInput.value);
+      if (v < maxStock) { qtyInput.value = v + 1; }
+    });
+
+    /* ============================================================
+       ADD TO CART  — saves to localStorage + updates badge
+    ============================================================ */
+    var cartBtn = document.getElementById('addToCartBtn');
+
+    cartBtn.addEventListener('click', function() {
+      var qty  = parseInt(qtyInput.value) || 1;
+      var cart = getCart();
+      var idx  = -1;
+
+      // Check if product already in cart
+      for (var i = 0; i < cart.length; i++) {
+        if (cart[i].id === PRODUCT.id) { idx = i; break; }
+      }
+
+      if (idx > -1) {
+        // Already in cart — increase quantity
+        cart[idx].qty += qty;
+      } else {
+        // New item
+        cart.push({
+          id:    PRODUCT.id,
+          name:  PRODUCT.name,
+          price: PRODUCT.price,
+          image: PRODUCT.image,
+          qty:   qty
+        });
+      }
+
+      saveCart(cart);
+      refreshBadge();
+
+      // Button feedback
+      var orig = cartBtn.textContent;
+      cartBtn.textContent       = '✓  Added';
+      cartBtn.style.background  = '#2a6e3a';
+      cartBtn.style.borderColor = '#2a6e3a';
+      setTimeout(function() {
+        cartBtn.textContent       = orig;
+        cartBtn.style.background  = '';
+        cartBtn.style.borderColor = '';
+      }, 2000);
+    });
+
+    /* ============================================================
+       TABS
+    ============================================================ */
+    var tabBtns  = document.querySelectorAll('.tab-btn');
+    var tabPanes = document.querySelectorAll('.tab-pane');
+
+    tabBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var target = this.getAttribute('data-tab');
+        tabBtns.forEach(function(b)  { b.classList.remove('active'); });
+        tabPanes.forEach(function(p) { p.classList.remove('active'); });
+        btn.classList.add('active');
+        document.getElementById('tab-' + target).classList.add('active');
+      });
+    });
+
+    /* ============================================================
+       INIT — refresh badge on page load (cart may already have items)
+    ============================================================ */
+    refreshBadge();
+
+  </script>
+</body>
+</html>
