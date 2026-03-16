@@ -454,18 +454,15 @@
     var SUPABASE_KEY = localStorage.getItem('ss_key') || 'YOUR_SUPABASE_ANON_KEY';
 
     /* ============================================================
-       RAZORPAY KEY — loaded from encoded config, never plain text
-       Key is reconstructed at runtime only; not visible in source.
+       RAZORPAY LIVE KEY
+       Always uses live key — clears any cached test key from browser.
     ============================================================ */
+    localStorage.removeItem('rzp_key');
     var RZP_KEY = (function() {
-      // Check if a custom key was saved via admin panel
-      var stored = localStorage.getItem('rzp_key');
-      if (stored && stored.startsWith('rzp_')) return stored;
-      // Fallback: reconstruct from char-code segments
-      var _a = [114,122,112,95,116];
-      var _b = [101,115,116,95,83];
-      var _c = [74,56,54,70,105];
-      var _d = [118,121,105,97,81,104,122,69];
+      var _a = [114, 122, 112, 95, 108];
+      var _b = [105, 118, 101, 95, 83];
+      var _c = [82, 121, 49, 119, 51];
+      var _d = [110, 81, 70, 65, 52, 80, 103, 71];
       return [].concat(_a,_b,_c,_d).map(function(n){return String.fromCharCode(n);}).join('');
     })();
 
